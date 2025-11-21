@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# User Data & Configuration (Security)
+data/
+*.dat
+.key
+
+# Dependencies (Downloaded automatically)
+dependencies/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
