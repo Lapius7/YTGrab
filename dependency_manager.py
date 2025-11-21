@@ -1,7 +1,4 @@
-"""
-依存関係管理モジュール
-yt-dlpとFFmpegを自動ダウンロード・管理します
-"""
+
 import os
 import sys
 import subprocess
@@ -10,7 +7,7 @@ import zipfile
 import shutil
 from pathlib import Path
 class DependencyManager:
-    """依存関係を管理するクラス"""
+    
     def __init__(self):
         if getattr(sys, 'frozen', False):
             self.app_dir = os.path.dirname(sys.executable)
@@ -22,7 +19,7 @@ class DependencyManager:
         self.ffmpeg_path = os.path.join(self.deps_dir, "ffmpeg.exe")
         self.ffprobe_path = os.path.join(self.deps_dir, "ffprobe.exe")
     def check_ytdlp(self) -> bool:
-        """yt-dlpがインストールされているか確認"""
+        
         if os.path.exists(self.ytdlp_path):
             return True
         try:
@@ -32,7 +29,7 @@ class DependencyManager:
         except (FileNotFoundError, subprocess.TimeoutExpired):
             return False
     def check_ffmpeg(self) -> bool:
-        """FFmpegがインストールされているか確認"""
+        
         if os.path.exists(self.ffmpeg_path):
             return True
         try:
@@ -42,7 +39,7 @@ class DependencyManager:
         except (FileNotFoundError, subprocess.TimeoutExpired):
             return False
     def download_ytdlp(self, progress_callback=None) -> bool:
-        """yt-dlpをダウンロード"""
+        
         try:
             url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
             if progress_callback:
@@ -56,7 +53,7 @@ class DependencyManager:
                 progress_callback(f"yt-dlpのダウンロードエラー: {str(e)}")
             return False
     def download_ffmpeg(self, progress_callback=None) -> bool:
-        """FFmpegをダウンロード"""
+        
         try:
             url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
             zip_path = os.path.join(self.deps_dir, "ffmpeg.zip")
@@ -92,11 +89,11 @@ class DependencyManager:
                 progress_callback(f"FFmpegのダウンロードエラー: {str(e)}")
             return False
     def setup_environment(self):
-        """環境変数を設定"""
+        
         if self.deps_dir not in os.environ['PATH']:
             os.environ['PATH'] = self.deps_dir + os.pathsep + os.environ['PATH']
     def ensure_dependencies(self, progress_callback=None) -> dict:
-        """必要な依存関係を確認し、不足していればダウンロード"""
+        
         results = {
             'ytdlp': {'installed': False, 'downloaded': False},
             'ffmpeg': {'installed': False, 'downloaded': False}

@@ -1,20 +1,17 @@
-"""
-ダウンロード処理モジュール
-yt-dlpを使用してYouTube動画をダウンロードします
-"""
+
 import os
 import yt_dlp
 from typing import Callable, Optional, Dict, Any
 class YouTubeDownloader:
-    """YouTube動画ダウンローダークラス"""
+    
     def __init__(self, progress_callback: Optional[Callable] = None):
         self.progress_callback = progress_callback
         self.is_cancelled = False
     def cancel(self):
-        """ダウンロードをキャンセル"""
+        
         self.is_cancelled = True
     def _progress_hook(self, d: Dict[str, Any]):
-        """ダウンロード進捗のフック"""
+        
         if self.is_cancelled:
             raise Exception("ダウンロードがキャンセルされました")
         if self.progress_callback and d['status'] == 'downloading':
@@ -35,7 +32,7 @@ class YouTubeDownloader:
                 'eta': eta
             })
     def get_video_info(self, url: str) -> Dict[str, Any]:
-        """動画情報を取得"""
+        
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
@@ -70,29 +67,7 @@ class YouTubeDownloader:
         except Exception as e:
             raise Exception(f"動画情報の取得に失敗しました: {str(e)}")
     def download(self, url: str, options: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        動画をダウンロード
-        Args:
-            url: YouTube URL
-            options: ダウンロードオプション
-                - download_path: 保存先パス
-                - download_type: 'video' or 'audio'
-                - video_quality: 動画品質 ('4K', '1080p', '720p', '480p', '360p')
-                - audio_quality: 音声品質 ('最高', '高', '中', '低')
-                - video_format: 動画フォーマット ('mp4', 'webm', 'mkv')
-                - audio_format: 音声フォーマット ('mp3', 'm4a', 'opus')
-                - download_subtitles: 字幕をダウンロード
-                - auto_subtitles: 自動生成字幕を含む
-                - subtitle_languages: 字幕言語リスト
-                - download_thumbnail: サムネイルをダウンロード
-                - embed_thumbnail: サムネイルを埋め込む
-                - filename_template: ファイル名テンプレート
-                - playlist_mode: プレイリストモード
-                - playlist_start: プレイリスト開始位置
-                - playlist_end: プレイリスト終了位置
-        Returns:
-            ダウンロード結果の辞書
-        """
+        
         self.is_cancelled = False
         download_path = options.get('download_path', '.')
         os.makedirs(download_path, exist_ok=True)

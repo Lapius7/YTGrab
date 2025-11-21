@@ -1,8 +1,4 @@
-"""
-YouTube Downloader GUI Application - Modern UI with Theme Switcher
-ライト/ダークモード切り替え、スクロール対応、依存関係自動ダウンロード
-折りたたみ可能な詳細オプション、設定ウィンドウ
-"""
+
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 import threading
@@ -13,7 +9,7 @@ from downloader import YouTubeDownloader
 from dependency_manager import DependencyManager
 from collapsible_frame import CollapsibleFrame
 class ThemeManager:
-    """テーマ管理クラス"""
+    
     LIGHT = {
         'name': 'light',
         'bg_dark': '#f5f5f5',
@@ -53,7 +49,7 @@ class ThemeManager:
     FONT_SIZE_NORMAL = 10
     FONT_SIZE_SMALL = 9
 class LoadingOverlay:
-    """ローディングオーバーレイ"""
+    
     def __init__(self, parent, text="処理中..."):
         self.parent = parent
         self.overlay = None
@@ -82,7 +78,7 @@ class LoadingOverlay:
             self.overlay.destroy()
             self.overlay = None
 class YouTubeDownloaderGUI:
-    """YouTubeダウンローダーGUIクラス"""
+    
     APP_NAME = "YTGrab"
     VERSION = "2.1.0"
     AUTHOR = "Lapius"
@@ -107,7 +103,7 @@ class YouTubeDownloaderGUI:
         self.root.protocol("WM_DELETE_WINDOW", self._on_closing)
         self.loading = LoadingOverlay(self.root)
     def _create_scrollable_canvas(self):
-        """スクロール可能なキャンバスを作成"""
+        
         self.canvas = tk.Canvas(self.root, bg=self.current_theme['bg_dark'], 
                                highlightthickness=0)
         self.scrollbar = tk.Scrollbar(self.root, orient="vertical", 
@@ -126,13 +122,13 @@ class YouTubeDownloaderGUI:
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
         self.canvas.bind('<Configure>', self._on_canvas_configure)
     def _on_canvas_configure(self, event):
-        """キャンバスのサイズ変更時の処理"""
+        
         self.canvas.itemconfig(self.canvas_window, width=event.width)
     def _on_mousewheel(self, event):
-        """マウスホイールでスクロール"""
+        
         self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
     def _init_variables(self):
-        """変数の初期化"""
+        
         self.download_path_var = tk.StringVar(value=self.config.get("download_path", os.path.join(os.path.expanduser("~"), "Downloads")))
         self.download_type_var = tk.StringVar(value=self.config.get("download_type", "video"))
         self.video_quality_var = tk.StringVar(value=self.config.get("video_quality", "best"))
@@ -163,7 +159,7 @@ class YouTubeDownloaderGUI:
         self.cookies_from_browser_var = tk.StringVar(value=self.config.get("cookies_from_browser", "なし"))
         self.proxy_var = tk.StringVar(value=self.config.get("proxy", ""))
     def _configure_styles(self):
-        """カスタムスタイルを設定"""
+        
         style = ttk.Style()
         style.theme_use('clam')
         theme = self.current_theme
@@ -227,7 +223,7 @@ class YouTubeDownloaderGUI:
                        foreground=theme['accent_primary'],
                        font=(ThemeManager.FONT_FAMILY, ThemeManager.FONT_SIZE_NORMAL, "bold"))
     def _switch_theme(self):
-        """テーマを切り替え（即座に適用）"""
+        
         if self.theme_var.get() == 'dark':
             self.current_theme = ThemeManager.DARK
         else:
@@ -246,7 +242,7 @@ class YouTubeDownloaderGUI:
             )
         self._log(f"✅ テーマを{self.theme_var.get()}モードに変更しました")
     def _update_entry_colors(self):
-        """すべてのEntryウィジェットの色を更新"""
+        
         if hasattr(self, 'url_entry'):
             self.url_entry.configure(
                 bg=self.current_theme['bg_darker'],
@@ -258,7 +254,7 @@ class YouTubeDownloaderGUI:
         for widget in self.root.winfo_children():
             self._update_widget_colors_recursive(widget)
     def _update_widget_colors_recursive(self, widget):
-        """ウィジェットとその子ウィジェットの色を再帰的に更新"""
+        
         if isinstance(widget, tk.Entry):
             widget.configure(
                 bg=self.current_theme['bg_darker'],
@@ -280,7 +276,7 @@ class YouTubeDownloaderGUI:
         except:
             pass
     def _open_settings_window(self):
-        """設定ウィンドウを開く"""
+        
         if hasattr(self, 'settings_window') and self.settings_window.winfo_exists():
             self.settings_window.lift()
             self.settings_window.focus()
@@ -321,7 +317,7 @@ class YouTubeDownloaderGUI:
                               style="Accent.TButton")
         close_btn.pack(pady=(10, 0), ipady=8, ipadx=20)
     def _check_dependencies(self):
-        """依存関係を確認"""
+        
         def check():
             try:
                 results = self.dep_manager.ensure_dependencies(
@@ -339,7 +335,7 @@ class YouTubeDownloaderGUI:
                 self.root.after(0, lambda: self._log(f"❌ 依存関係の確認エラー: {str(e)}"))
         threading.Thread(target=check, daemon=True).start()
     def _create_widgets(self):
-        """ウィジェットを作成"""
+        
         self.scrollable_frame.columnconfigure(0, weight=1)
         main_frame = ttk.Frame(self.scrollable_frame, padding="20", style="Modern.TFrame")
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
@@ -744,7 +740,7 @@ class YouTubeDownloaderGUI:
                   style="Modern.TButton").pack(side=tk.LEFT, ipady=8, ipadx=15)
         self._on_type_change()
     def _on_type_change(self):
-        """ダウンロードタイプ変更時の処理"""
+        
         is_video = self.download_type_var.get() == "video"
         state = "readonly" if is_video else "disabled"
         self.video_quality_combo.config(state=state)
@@ -753,30 +749,30 @@ class YouTubeDownloaderGUI:
         self.audio_quality_combo.config(state=state)
         self.audio_format_combo.config(state=state)
     def _on_subtitle_change(self):
-        """字幕オプション変更時の処理"""
+        
         state = tk.NORMAL if self.download_subtitles_var.get() else tk.DISABLED
         self.auto_subtitles_check.config(state=state)
     def _on_playlist_change(self):
-        """プレイリストモード変更時の処理"""
+        
         state = tk.NORMAL if self.playlist_mode_var.get() else tk.DISABLED
         self.playlist_start_entry.config(state=state)
         self.playlist_end_entry.config(state=state)
     def _browse_folder(self):
-        """保存先フォルダを選択"""
+        
         folder = filedialog.askdirectory(initialdir=self.download_path_var.get())
         if folder:
             self.download_path_var.set(folder)
     def _log(self, message: str):
-        """ログに追加"""
+        
         timestamp = datetime.now().strftime("%H:%M:%S")
         self.log_text.insert(tk.END, f"[{timestamp}] {message}\n")
         self.log_text.see(tk.END)
         self.root.update_idletasks()
     def _clear_log(self):
-        """ログをクリア"""
+        
         self.log_text.delete(1.0, tk.END)
     def _load_settings(self):
-        """設定を読み込む"""
+        
         self.download_path_var.set(self.config.get("download_path"))
         self.download_type_var.set(self.config.get("download_type"))
         self.video_quality_var.set(self.config.get("video_quality"))
@@ -793,7 +789,7 @@ class YouTubeDownloaderGUI:
         self._on_subtitle_change()
         self._on_playlist_change()
     def _save_settings(self):
-        """設定を保存"""
+        
         self.config.set("download_path", self.download_path_var.get())
         self.config.set("download_type", self.download_type_var.get())
         self.config.set("video_quality", self.video_quality_var.get())
@@ -810,7 +806,7 @@ class YouTubeDownloaderGUI:
             self._log("✅ 設定を保存しました")
         self.status_label.config(text="⏸️ 待機中...")
     def _get_video_info(self):
-        """動画情報を取得"""
+        
         url = self.url_entry.get().strip()
         if not url:
             messagebox.showwarning("警告", "URLを入力してください")
@@ -830,7 +826,7 @@ class YouTubeDownloaderGUI:
                 self.root.after(0, self.loading.hide)
         threading.Thread(target=get_info, daemon=True).start()
     def _show_video_info(self, info: dict):
-        """動画情報を表示"""
+        
         if info['type'] == 'playlist':
             message = f"プレイリスト: {info['title']}\n"
             message += f"動画数: {info['count']}\n\n"
@@ -854,7 +850,7 @@ class YouTubeDownloaderGUI:
             self._log(f"🎬 動画情報を取得: {info['title']}")
         messagebox.showinfo("動画情報", message)
     def _progress_callback(self, progress: dict):
-        """ダウンロード進捗のコールバック"""
+        
         percent = progress.get('percent', 0)
         speed = progress.get('speed', 0)
         eta = progress.get('eta', 0)
@@ -871,7 +867,7 @@ class YouTubeDownloaderGUI:
                 status += f" | 残り: {eta_int}秒"
         self.root.after(0, lambda: self.status_label.config(text=status))
     def _start_download(self):
-        """ダウンロードを開始"""
+        
         url = self.url_entry.get().strip()
         if not url:
             messagebox.showwarning("警告", "URLを入力してください")
@@ -945,12 +941,12 @@ class YouTubeDownloaderGUI:
                 self.root.after(0, lambda: self._download_error(str(e)))
         threading.Thread(target=download, daemon=True).start()
     def _cancel_download(self):
-        """ダウンロードをキャンセル"""
+        
         if self.downloader:
             self.downloader.cancel()
             self._log("⏹️ ダウンロードをキャンセルしました")
     def _download_complete(self, result: dict, url: str, options: dict):
-        """ダウンロード完了時の処理"""
+        
         self.is_downloading = False
         self.download_btn.config(state=tk.NORMAL)
         self.cancel_btn.config(state=tk.DISABLED)
@@ -982,7 +978,7 @@ class YouTubeDownloaderGUI:
             self.status_label.config(text="❌ エラー")
             messagebox.showerror("エラー", result['error'])
     def _download_error(self, error: str):
-        """ダウンロードエラー時の処理"""
+        
         self.is_downloading = False
         self.download_btn.config(state=tk.NORMAL)
         self.cancel_btn.config(state=tk.DISABLED)
@@ -990,7 +986,7 @@ class YouTubeDownloaderGUI:
         self._log(f"❌ エラー: {error}")
         messagebox.showerror("エラー", error)
     def _show_history(self):
-        """ダウンロード履歴を表示"""
+        
         history = self.config.get_history()
         if not history:
             messagebox.showinfo("履歴", "ダウンロード履歴はありません")
@@ -1050,7 +1046,7 @@ class YouTubeDownloaderGUI:
                   command=history_window.destroy,
                   style="Modern.TButton").pack(side=tk.RIGHT, ipady=6, ipadx=15)
     def _start_download(self):
-        """ダウンロードを開始"""
+        
         url = self.url_entry.get().strip()
         if not url:
             messagebox.showwarning("警告", "URLを入力してください")
@@ -1097,12 +1093,12 @@ class YouTubeDownloaderGUI:
                 self.root.after(0, lambda: self._download_error(str(e)))
         threading.Thread(target=download, daemon=True).start()
     def _cancel_download(self):
-        """ダウンロードをキャンセル"""
+        
         if self.downloader:
             self.downloader.cancel()
             self._log("⏹️ ダウンロードをキャンセルしました")
     def _download_complete(self, result: dict, url: str, options: dict):
-        """ダウンロード完了時の処理"""
+        
         self.is_downloading = False
         self.download_btn.config(state=tk.NORMAL)
         self.cancel_btn.config(state=tk.DISABLED)
@@ -1134,7 +1130,7 @@ class YouTubeDownloaderGUI:
             self.status_label.config(text="❌ エラー")
             messagebox.showerror("エラー", result['error'])
     def _download_error(self, error: str):
-        """ダウンロードエラー時の処理"""
+        
         self.is_downloading = False
         self.download_btn.config(state=tk.NORMAL)
         self.cancel_btn.config(state=tk.DISABLED)
@@ -1142,7 +1138,7 @@ class YouTubeDownloaderGUI:
         self._log(f"❌ エラー: {error}")
         messagebox.showerror("エラー", error)
     def _show_history(self):
-        """ダウンロード履歴を表示"""
+        
         history = self.config.get_history()
         if not history:
             messagebox.showinfo("履歴", "ダウンロード履歴はありません")
@@ -1202,7 +1198,7 @@ class YouTubeDownloaderGUI:
                   command=history_window.destroy,
                   style="Modern.TButton").pack(side=tk.RIGHT, ipady=6, ipadx=15)
     def _show_playlist_selector(self):
-        """プレイリスト選択ダイアログを表示"""
+        
         url = self.url_entry.get().strip()
         if not url:
             messagebox.showwarning("警告", "URLを入力してください")
@@ -1258,7 +1254,7 @@ class YouTubeDownloaderGUI:
                 self.root.after(0, self.loading.hide)
         threading.Thread(target=fetch_info, daemon=True).start()
     def _show_selection_dialog(self, info):
-        """動画選択ダイアログを表示"""
+        
         self._log(f"✅ プレイリスト情報を取得しました: {len(info['entries'])}件")
         dialog = tk.Toplevel(self.root)
         dialog.title(f"プレイリスト選択: {info.get('title', 'Unknown')}")
@@ -1326,7 +1322,7 @@ class YouTubeDownloaderGUI:
         ttk.Button(btn_frame, text="OK", command=on_ok,
                   style="Accent.TButton").pack(side=tk.RIGHT, padx=5)
     def _on_closing(self):
-        """終了時の処理"""
+        
         if self.is_downloading:
             if not messagebox.askokcancel("確認", "ダウンロード中です。終了してもよろしいですか？"):
                 return
@@ -1334,7 +1330,7 @@ class YouTubeDownloaderGUI:
         self._save_settings()
         self.root.destroy()
     def main(self):
-        """メインループ"""
+        
         self.root.mainloop()
 if __name__ == "__main__":
     root = tk.Tk()
